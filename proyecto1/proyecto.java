@@ -18,7 +18,7 @@ public class proyecto {
     int[] tem = new int[5];
     ;
     String prueba = "";
-    File doc = new File("E:/irvyn/Documents/GitHub/SO1/proyecto1/datos2.txt");
+    File doc = new File("E:/irvyn/Documents/GitHub/SO1/proyecto1/datos3.txt");
 
     BufferedReader obj = new BufferedReader(new FileReader(doc));
 
@@ -146,42 +146,64 @@ public class proyecto {
                 }
               }
 
-              // para pruebas
-              // System.out.println("aux pip: " + aux.pip);
-              // System.out.println("aux Texe: " + aux.tiempoEjecucion);
-
               int temp = 0;
               boolean found = false;
+              boolean enCola = false;
               aux.prioridad = -10;
               for (int l = 0; l < k; l++) {
                 if (proceso[l].tiempoLlegada <= tiempo[cpu] && proceso[l].tiempoEjecucion == aux.tiempoEjecucion
                     && proceso[l].finalizado == false) {
-                  // obtiene el de mayor prioridad
-                  if (proceso[l].prioridad > aux.prioridad) {
-                    aux.pip = proceso[l].pip;
-                    aux.tiempoEjecucion = proceso[l].tiempoEjecucion;
-                    aux.prioridad = proceso[l].prioridad;
-                    aux.finalizado = proceso[l].finalizado;
-                    aux.tiempoLlegada = proceso[l].tiempoLlegada;
-                  }
-                  // si prioridad es igual revisa el pip
-                  if (proceso[l].prioridad == aux.prioridad) {
-                    if (proceso[l].pip < aux.pip) {
+                  if (monoTarea == true) {
+                    // obtiene el de mayor prioridad
+                    if (proceso[l].prioridad > aux.prioridad) {
                       aux.pip = proceso[l].pip;
                       aux.tiempoEjecucion = proceso[l].tiempoEjecucion;
                       aux.prioridad = proceso[l].prioridad;
                       aux.finalizado = proceso[l].finalizado;
                       aux.tiempoLlegada = proceso[l].tiempoLlegada;
                     }
+                    // si prioridad es igual revisa el pip
+                    if (proceso[l].prioridad == aux.prioridad) {
+                      if (proceso[l].pip < aux.pip) {
+                        aux.pip = proceso[l].pip;
+                        aux.tiempoEjecucion = proceso[l].tiempoEjecucion;
+                        aux.prioridad = proceso[l].prioridad;
+                        aux.finalizado = proceso[l].finalizado;
+                        aux.tiempoLlegada = proceso[l].tiempoLlegada;
+                      }
+                    }
                   }
+
                   // System.out.println("pip " + proceso[l].pip);
                   if (monoTarea == false) {
+                    enCola = false;
                     for (int m = 0; m < numCola; m++) {
                       // System.out.println("cola " + cola[m]);
                       if (cola[m] == proceso[l].pip) {
                         found = true;
+                        enCola = true;
                       } else {
                         found = false;
+                      }
+                    }
+                    if (enCola == false) {
+                      // obtiene el de mayor prioridad
+                      if (proceso[l].prioridad > aux.prioridad) {
+                        aux.pip = proceso[l].pip;
+                        aux.tiempoEjecucion = proceso[l].tiempoEjecucion;
+                        aux.prioridad = proceso[l].prioridad;
+                        aux.finalizado = proceso[l].finalizado;
+                        aux.tiempoLlegada = proceso[l].tiempoLlegada;
+                      }
+                      // si prioridad es igual revisa el pip
+                      if (proceso[l].prioridad == aux.prioridad) {
+                        if (proceso[l].pip < aux.pip) {
+                          aux.pip = proceso[l].pip;
+                          aux.tiempoEjecucion = proceso[l].tiempoEjecucion;
+                          aux.prioridad = proceso[l].prioridad;
+                          aux.finalizado = proceso[l].finalizado;
+                          aux.tiempoLlegada = proceso[l].tiempoLlegada;
+                        }
                       }
                     }
                   }
@@ -192,6 +214,9 @@ public class proyecto {
               }
               // para pruebas
               // System.out.println("temp " + temp);
+              // para pruebas
+              // System.out.println("aux pip: " + aux.pip);
+              // System.out.println("aux Texe: " + aux.tiempoEjecucion);
               if (temp == 0) {
                 if (cola[0] == 1000) {
                   System.out.println("CPU" + cpu + ":" + tiempo[cpu] + "\t- - - - - -");
@@ -199,6 +224,10 @@ public class proyecto {
                 }
                 cola[0] = 1000;
                 numCola = 0;
+                if (monoTarea == false && a !=1) {
+                  // System.out.println("CPU" + cpu + ":" + tiempo[cpu] + "\t- - - - - -");
+                  tiempo[cpu]++;
+                }
               } else { // existe
                 // empieza a buscar
                 for (int l = 0; l < k; l++) {
