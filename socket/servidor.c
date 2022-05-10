@@ -10,9 +10,11 @@
 int main(int argc, char *argv[]){
  int sock, tam, n;
  socklen_t origenTam;
- struct sockaddr_in origen;
+ struct sockaddr_in origen[10];
+ int numClientes = 0;
  struct sockaddr_in servidor;
  char buffer[1024];
+ char usuario[10];
  
  if(argc < 2){
   printf("Error en la cantidad de parametros, se requiere establecer un puerto \n");
@@ -33,19 +35,26 @@ int main(int argc, char *argv[]){
  origenTam = sizeof(struct sockaddr_in);
  printf("SERVIDOR ACTIVO ------- ESPERA A RECIBIR MENSAJES--------\n");
  while(1){
-  n = recvfrom(sock,buffer,1024,0,(struct sockaddr *)&origen,&origenTam);
-  if(n < 0){
+     strcpy(usuario,"");
+     strcpy(buffer,"");
+    int u = recvfrom(sock,usuario,10,0,(struct sockaddr *)&origen,&origenTam);
+  if(u < 0){
    printf("error recibir datos \n");
    exit(0);
+  }else{
+      n = recvfrom(sock,buffer,1024,0,(struct sockaddr *)&origen,&origenTam);
   }
-  write(1, "Se ha recibido un datagrama: ",28);
+  write(1,usuario,10);
+  write(1,": ",2);
   write(1,buffer,n);
 
-  n = sendto(sock,"Servidor: He recibido tu msg \n",31,0, (struct sockaddr *)&origen, origenTam);
+  n = sendto(sock,usuario,strlen(usuario),0, (struct sockaddr *)&origen, origenTam);
+  u = sendto(sock,buffer,strlen(buffer),0, (struct sockaddr *)&origen, origenTam);
   if(n < 0){
    printf("error al enviar  datos \n");
-   exit(0);  
-  } 
+   exit(0);   
+  }
+  
  }
  return 0;
 }

@@ -8,19 +8,19 @@
 #include <string.h>
 
 int main(int argc, char *argv[]){
- int sock, tam, n;
+ int sock, tam, n, u, enviado;
  socklen_t origenTam;
  struct hostent *huesped;
  struct sockaddr_in origen, servidor;
  char buffer[1024];
- 
- if(argc < 3){
+ char usuario[10];
+ if(argc < 4){
   printf("Error en la cantidad de parametros, se requiere establecer un puerto \n");
-  printf("Sintaxis: ./prog servidor puerto\n");
+  printf("Sintaxis: ./prog servidor puerto usuario(maximo 10 caracteres)\n");
   exit(0);
   return 0;
  }
- 
+
  sock = socket(AF_INET, SOCK_DGRAM, 0);
  tam = sizeof(struct sockaddr_in);
  bzero(&servidor,tam);
@@ -32,31 +32,55 @@ int main(int argc, char *argv[]){
  bzero(buffer,1024);
  bcopy((char *)huesped->h_addr,(char *)&servidor.sin_addr,huesped->h_length);
  servidor.sin_family = AF_INET;
+ servidor.sin_addr.s_addr = INADDR_ANY;
  servidor.sin_port = htons(atoi(argv[2]));
 
 char entrada[1024];
+char temp[1024];
 int cmp = 1;
 while(cmp != 10 ){
- printf("Ingresa una cadena: \n");
+ //printf("Ingresa una cadena: \n");
  fgets(buffer,1024,stdin);
  strcpy(entrada,buffer);
+ strcpy(temp,argv[3]);
+  strcat(temp,buffer);
+  //printf("%s",temp);
 
  cmp = strcmp(entrada,"adios");
- printf("Buffer: %sEntrada:%s CMP: %d \n",buffer,entrada,cmp);
+ //printf("Buffer: %sEntrada:%s CMP: %d \n",buffer,entrada,cmp);
+ n = sendto(sock, argv[3],strlen(argv[3]),0, (struct sockaddr *)&servidor, tam);
+ if(n < 0){
+   printf("error al enviar el mensaje \n");
+   exit(0);  
+  } 
  n = sendto(sock, buffer,strlen(buffer),0, (struct sockaddr *)&servidor, tam);
   if(n < 0){
    printf("error al enviar el mensaje \n");
    exit(0);  
-  } 
+  }
+  enviado = 1;
 
+  if(enviado == 1){
+    sleep(1);
+    enviado = 0;
+  }
  origenTam = sizeof(struct sockaddr_in);
+  n = recvfrom(sock,usuario,10,0,(struct sockaddr *)&origen,&tam);
+  if(n < 0){
+   printf("error recibir datos \n");
+   exit(0);
+  }
   n = recvfrom(sock,buffer,1024,0,(struct sockaddr *)&origen,&tam);
   if(n < 0){
    printf("error recibir datos \n");
    exit(0);
   }
-  write(1, "Se ha enviado un mensaje\n",27);
-  write(1,buffer,n);
+    write(1, "\n",2);
+    write(1,usuario,10);
+    write(1, ": ",2);
+    write(1,buffer,n);
+    write(1, "\n",2);
+  
 }
   close(sock);
  
