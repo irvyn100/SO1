@@ -72,9 +72,9 @@ strcpy(buffer,"");
       printf("error recibir datos \n");
       exit(0);
       }
-        /*write(1,usuario,u);
+        write(1,usuario,u);
         write(1, ": ",2);
-        write(1,buffer,n);*/
+        write(1,buffer,n);
     }
     
   }
