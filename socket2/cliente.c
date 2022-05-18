@@ -93,9 +93,9 @@ while(cmp != 10 ){
  buffer[n] = '\n';
  strcat(msg,buffer);
  aux2 = strlen(msg);
-  //printf("%s \n",msg);
-  //write(1, msg ,aux);
-  //write(1,buffer,n);
+  printf("%s \n",msg);
+  write(1, msg ,aux);
+  write(1,buffer,n);
  if(aux == 1){
    n = recvfrom(sock,buffer,1024,0,(struct sockaddr *)&origen,&tam);
    char msg[100]= "Se ha enviado un mensaje";
